@@ -1,19 +1,39 @@
 package bitquery
 
 import (
+	"blockdata-crawling/datas"
 	"blockdata-crawling/src/types"
+	"bytes"
 	"encoding/json"
 	"fmt"
 	"io"
 	"net/http"
-	"reflect"
-	"strings"
 )
 
 func Api(dataSource types.DataSource) {
 	url := dataSource.DataSource.Url
 	method := "POST"
-	payload := strings.NewReader(`{"query":"query MyQuery {\n  bitcoin(network: bitcoin) {\n    blocks(date: {after: \"2022-09-19\"}) {\n      timestamp {\n        time\n      }\n      height\n      blockHash\n    }\n  }\n}\n","variables":"{}"}`)
+	jsonData := map[string]string{
+		"query": `
+                query MyQuery{
+            		bitcoin(network: bitcoin){
+                		blocks(date: {after: "2022-09-19"}){
+							timestamp {
+								time
+								unixtime
+							}
+							height
+							blockHash
+							difficulty
+							transactionCount
+						}
+                	}
+                }
+        `,
+		"variables": "{}",
+	}
+	jsonValue, _ := json.Marshal(jsonData)
+	payload := bytes.NewBuffer(jsonValue)
 
 	client := &http.Client{}
 	req, err := http.NewRequest(method, url, payload)
@@ -31,6 +51,9 @@ func Api(dataSource types.DataSource) {
 		return
 	}
 	defer res.Body.Close()
+	if res.StatusCode != http.StatusOK {
+		panic("bad request!")
+	}
 
 	body, err := io.ReadAll(res.Body)
 	if err != nil {
@@ -44,8 +67,23 @@ func Api(dataSource types.DataSource) {
 	data := resultObj["data"].(map[string]interface{})
 	bitcoin := data["bitcoin"].(map[string]interface{})
 	blocks := bitcoin["blocks"].([]interface{})
-	test := blocks[0].(map[string]interface{})
-	fmt.Println(reflect.TypeOf(blocks[0]))
-	blockhash := test["blockHash"]
-	fmt.Println(blockhash)
+	for _, v := range blocks {
+		var blockData types.BitcoinData
+		var timeStamp types.Timestamp
+		var blockHash string
+		dataMap := v.(map[string]interface{})
+		blockHash = dataMap["blockHash"].(string)
+		timeStampMap := dataMap["timestamp"].(map[string]interface{})
+		timeStamp.Time = timeStampMap["time"].(string)
+		timeStamp.Unixtime = timeStampMap["unixtime"].(float64)
+
+		blockData.Timestamp = timeStamp
+		blockData.Height = dataMap["height"].(float64)
+		blockData.BlockHash = blockHash
+		blockData.Difficulty = dataMap["difficulty"].(float64)
+		blockData.TransactionCount = dataMap["transactionCount"].(float64)
+
+		datas.BitcoinDataHashMap[blockHash] = blockData
+		datas.BitcoinHashList = append(datas.BitcoinHashList, blockHash)
+	}
 }
