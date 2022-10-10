@@ -9,9 +9,9 @@ import (
 )
 
 func main() {
-	dataSource := libs.LoadDataSourceConfig()
+	config := libs.LoadConfig()
 	datas.Init()
-	bitquery.Api(dataSource)
+	bitquery.Api(config)
 	for k, v := range datas.BitcoinDataHashMap {
 		fmt.Println("Key:", k, "Value:", v)
 	}

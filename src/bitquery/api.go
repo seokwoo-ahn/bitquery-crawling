@@ -10,8 +10,8 @@ import (
 	"net/http"
 )
 
-func Api(dataSource types.DataSource) {
-	url := dataSource.DataSource.Url
+func Api(config types.Config) {
+	url := config.Datasource.Url
 	method := "POST"
 	jsonData := map[string]string{
 		"query": `
@@ -43,7 +43,7 @@ func Api(dataSource types.DataSource) {
 		return
 	}
 	req.Header.Add("Content-Type", "application/json")
-	req.Header.Add("X-API-KEY", dataSource.DataSource.ApiKey)
+	req.Header.Add("X-API-KEY", config.Datasource.ApiKey)
 
 	res, err := client.Do(req)
 	if err != nil {
