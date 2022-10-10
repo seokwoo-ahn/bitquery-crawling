@@ -4,9 +4,9 @@ import (
 	"blockdata-crawling/src/types"
 )
 
-var BitcoinDataHashMap map[string]types.BitcoinData
-var BitcoinHashList []string
+var BitcoinBlockDataMap map[string]types.BitcoinData
+var BitcoinBlockHashList []string
 
-func Init() {
-	BitcoinDataHashMap = make(map[string]types.BitcoinData)
+func BitCoinDataStorageInit() {
+	BitcoinBlockDataMap = make(map[string]types.BitcoinData)
 }

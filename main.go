@@ -10,10 +10,10 @@ import (
 
 func main() {
 	config := libs.LoadConfig()
-	datas.Init()
+	datas.BitCoinDataStorageInit()
 	bitquery.Api(config)
-	for k, v := range datas.BitcoinDataHashMap {
+	for k, v := range datas.BitcoinBlockDataMap {
 		fmt.Println("Key:", k, "Value:", v)
 	}
-	fmt.Println(datas.BitcoinHashList)
+	fmt.Println(datas.BitcoinBlockHashList)
 }

@@ -83,7 +83,7 @@ func Api(config types.Config) {
 		blockData.Difficulty = dataMap["difficulty"].(float64)
 		blockData.TransactionCount = dataMap["transactionCount"].(float64)
 
-		datas.BitcoinDataHashMap[blockHash] = blockData
-		datas.BitcoinHashList = append(datas.BitcoinHashList, blockHash)
+		datas.BitcoinBlockDataMap[blockHash] = blockData
+		datas.BitcoinBlockHashList = append(datas.BitcoinBlockHashList, blockHash)
 	}
 }

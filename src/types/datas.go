@@ -12,3 +12,11 @@ type BitcoinData struct {
 	Difficulty       float64
 	TransactionCount float64
 }
+
+type EhtereumData struct {
+	Timestamp        Timestamp
+	Height           float64
+	BlockHash        string
+	Difficulty       float64
+	TrnasactionCount float64
+}
