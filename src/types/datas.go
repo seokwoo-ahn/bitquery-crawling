@@ -18,5 +18,5 @@ type EhtereumData struct {
 	Height           float64
 	BlockHash        string
 	Difficulty       float64
-	TrnasactionCount float64
+	TransactionCount float64
 }
