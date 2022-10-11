@@ -11,23 +11,32 @@ import (
 )
 
 type scan struct {
-	chain    string
-	scanType string
+	chain string
 }
 
 var scanList []scan
 
 func CallApi(config types.Config) error {
-	var scan = new(scan)
-	scan.chain = config.Chain
-	scanList = append(scanList, *scan)
+end:
+	for {
+		fmt.Println("Enter chain name")
+		chain := prompt.Input(">> ", prompts.Chain)
+		switch chain {
+		case "end":
+			break end
+		default:
+			var scan = new(scan)
+			scan.chain = chain
+			scanList = append(scanList, *scan)
+		}
+	}
 
 	for _, v := range scanList {
 		fmt.Println(v.chain)
 		fmt.Println("Enter Your Scan Type")
-		input := prompt.Input("> ", prompts.Completer)
+		scanType := prompt.Input(">> ", prompts.ScanType)
 
-		switch input {
+		switch scanType {
 		case "blocks":
 			if v.chain == "bitcoin" {
 				bitcoin.BlockScan(config)
