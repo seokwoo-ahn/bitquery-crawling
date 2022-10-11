@@ -11,7 +11,12 @@ import (
 func main() {
 	config := libs.LoadConfig()
 	datas.StorageInit()
-	bitquery.CallApi(config)
+
+	if err := bitquery.CallApi(config); err != nil {
+		fmt.Println(err)
+		return
+	}
+
 	for k, v := range datas.BitcoinBlockDataMap {
 		fmt.Println("Key:", k, "Value:", v)
 	}
