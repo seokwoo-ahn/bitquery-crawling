@@ -68,7 +68,7 @@ func BlockScan(config types.Config) {
 	ethereum := data["ethereum"].(map[string]interface{})
 	blocks := ethereum["blocks"].([]interface{})
 	for _, v := range blocks {
-		var blockData types.EhtereumData
+		var blockData types.EthereumBlockData
 		var timeStamp types.Timestamp
 		var blockHash string
 		dataMap := v.(map[string]interface{})
@@ -84,6 +84,6 @@ func BlockScan(config types.Config) {
 		blockData.TransactionCount = dataMap["transactionCount"].(float64)
 
 		datas.EthereumBlockDataMap[blockHash] = blockData
-		datas.EhtereumBlockHashList = append(datas.EhtereumBlockHashList, blockHash)
+		datas.EthereumBlockHashList = append(datas.EthereumBlockHashList, blockHash)
 	}
 }

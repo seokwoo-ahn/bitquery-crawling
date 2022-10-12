@@ -10,22 +10,25 @@ import (
 	"net/http"
 )
 
-func BlockScan(config types.Config) {
+func TransactionScan(config types.Config) {
 	url := config.Datasource.Url
 	method := "POST"
 	jsonData := map[string]string{
 		"query": `
                 query MyQuery{
             		bitcoin(network: bitcoin){
-                		blocks(date: {after: "2022-09-19"}){
-							timestamp {
-								time
-								unixtime
+                		transactions{
+							block(height: {gt: 758340}){
+								timestamp {
+									time
+									unixtime
+								}
+								height								
 							}
-							height
-							blockHash
-							difficulty
-							transactionCount
+							count
+							hash
+							inputValue
+							outputValue
 						}
                 	}
                 }
@@ -66,24 +69,34 @@ func BlockScan(config types.Config) {
 
 	data := resultObj["data"].(map[string]interface{})
 	bitcoin := data["bitcoin"].(map[string]interface{})
-	blocks := bitcoin["blocks"].([]interface{})
-	for _, v := range blocks {
+	transactions := bitcoin["transactions"].([]interface{})
+	for _, v := range transactions {
+		var txData types.BitcoinTxData
 		var blockData types.BitcoinBlockData
 		var timeStamp types.Timestamp
-		var blockHash string
+
 		dataMap := v.(map[string]interface{})
-		blockHash = dataMap["blockHash"].(string)
-		timeStampMap := dataMap["timestamp"].(map[string]interface{})
+
+		blockMap := dataMap["block"].(map[string]interface{})
+		timeStampMap := blockMap["timestamp"].(map[string]interface{})
 		timeStamp.Time = timeStampMap["time"].(string)
 		timeStamp.Unixtime = timeStampMap["unixtime"].(float64)
+		height := blockMap["height"].(float64)
+		count := dataMap["count"].(float64)
+		hash := dataMap["hash"].(string)
+		inputValue := dataMap["inputValue"].(float64)
+		outputValue := dataMap["outputValue"].(float64)
 
 		blockData.Timestamp = timeStamp
-		blockData.Height = dataMap["height"].(float64)
-		blockData.BlockHash = blockHash
-		blockData.Difficulty = dataMap["difficulty"].(float64)
-		blockData.TransactionCount = dataMap["transactionCount"].(float64)
+		blockData.Height = height
 
-		datas.BitcoinBlockDataMap[blockHash] = blockData
-		datas.BitcoinBlockHashList = append(datas.BitcoinBlockHashList, blockHash)
+		txData.BitcoinBlockData = blockData
+		txData.Count = count
+		txData.Hash = hash
+		txData.InputValue = inputValue
+		txData.OutputValue = outputValue
+
+		datas.BitcoinTxDataMap[hash] = txData
+		datas.BitcoinTxHashList = append(datas.BitcoinTxHashList, hash)
 	}
 }

@@ -5,7 +5,7 @@ type Timestamp struct {
 	Unixtime float64
 }
 
-type BitcoinData struct {
+type BitcoinBlockData struct {
 	Timestamp        Timestamp
 	Height           float64
 	BlockHash        string
@@ -13,7 +13,15 @@ type BitcoinData struct {
 	TransactionCount float64
 }
 
-type EhtereumData struct {
+type BitcoinTxData struct {
+	BitcoinBlockData BitcoinBlockData
+	Count            float64
+	Hash             string
+	InputValue       float64
+	OutputValue      float64
+}
+
+type EthereumBlockData struct {
 	Timestamp        Timestamp
 	Height           float64
 	BlockHash        string

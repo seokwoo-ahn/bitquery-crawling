@@ -46,7 +46,13 @@ end:
 				return fmt.Errorf("invalid chain")
 			}
 		case "transactions":
-			fmt.Println("지원 예정")
+			if v.chain == "bitcoin" {
+				bitcoin.TransactionScan(config)
+			} else if v.chain == "ethereum" {
+				fmt.Println("지원 예정")
+			} else {
+				return fmt.Errorf("invalid chain")
+			}
 		case "transaction by hash":
 			fmt.Println("지원 예정")
 		default:
